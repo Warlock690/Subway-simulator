@@ -1,30 +1,21 @@
 # Train Simulator
 
-Bu proje Textual tabanlı bir metin kullanıcı arayüzü (TUI) kullanır.
+Bu proje **Tkinter** tabanlı bir grafik kullanıcı arayüzü (GUI) kullanır.
 
 ## Çalıştırma
 
-1. Proje kök dizinine geç:
-
 ```bash
 cd /home/daisy/simulator
+python3 game/main.py
 ```
 
-2. Sanal ortamı etkinleştir (veya doğrudan kullan):
-
-```bash
-source .venv/bin/activate
-```
-
-3. Oyunu başlat:
-
-```bash
-python3 game/app.py
-```
+Sanal ortam gerekmez (standart kütüphanedeki tkinter kullanılır).
 
 ## Oyun kullanımı
 
-- `Space` tuşu ile bir sonraki kasabaya ilerlersin.
-- Her hattın rastgele bir kasabasında bir `level` olayı çıkar.
-- Seçim düğmeleri çıkıp hazır olduğunda `1`, `2` veya `3` seçeneğini kullan.
-- `R` ile yeniden başlatabilir, `Q` ile çıkabilirsin.
+- **Space** — bir sonraki kasabaya ilerle
+- **BASLAT** butonu — oyunu baslatir, 10 dakikalik sure baslar
+- **KONTROLLER** butonu — tuş bilgilerini gösterir
+- Olay aninda karsina cikan pencerede **1**, **2** veya **3** tuslarina bas
+- Sure dolar veya kaynaklarin (para, itibar, yakit) biri sifirlanirsa oyun biter
+- **TEKRAR DENE** butonu ile ana menuye donup yeniden baslayabilirsin
