@@ -1,109 +1,38 @@
-# level7.py
-
 import random
 
 
 class MissingCargoEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║        LEVEL 7 - KAYIP KARGO         ║
-╚══════════════════════════════════════╝
-
-📦 Gece yapılan sayımda önemli bir
-kargonun kaybolduğu fark edildi.
-
-💎 Kargo çok değerli ve sigortalı.
-🚂 Son teslim tarihi yaklaşıyor.
-
-📹 Güvenlik kameraları içeriden
-bir müdahale olabileceğini gösteriyor.
-
-Ne yapacaksın?
-
-1️⃣ Dedektif Tut
-   -500₺
-   Kargoyu bulma şansı yüksek
-
-2️⃣ Sigortadan Karşıla
-   Hızlı çözüm
-   İtibar riski var
-
-3️⃣ Personeli Sorgula
-   Ucuz
-   Ama çalışanlar rahatsız olabilir
-""")
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Gece yapılan sayımda önemli bir\n"
+            "kargonun kaybolduğu fark edildi.\n\n"
+            " Kargo çok değerli ve sigortalı.\n"
+            " Son teslim tarihi yaklaşıyor.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "Dedektif Tut  (-500₺, yüksek başarı)"),
+                ("2", "Sigortadan Karşıla  (itibar riski)"),
+                ("3", "Personeli Sorgula  (ucuz, riskli)"),
+            ],
+            title="Kayıp Kargo",
+        )
 
         if choice == "1":
-
             train.money -= 500
-
             if random.randint(1, 100) <= 85:
-
                 train.money += 1000
-
-                print("""
-🕵️ Dedektif başarılı!
-
-📦 Kargo geri alındı.
-
--500₺
-+1000₺
-""")
-
+                ui.show(" Dedektif başarılı!\n\n Kargo geri alındı.\n\n-500₺  +1000₺", title="Sonuç")
             else:
-
-                print("""
-🕵️ Soruşturma başarısız.
-
--500₺
-""")
-
+                ui.show(" Soruşturma başarısız.\n\n-500₺", title="Sonuç")
         elif choice == "2":
-
             train.reputation -= 15
-
-            print("""
-📄 Sigorta devreye girdi.
-
-💼 Zarar karşılandı ama
-müşteri memnuniyeti düştü.
-
--15 İtibar
-""")
-
+            ui.show(" Sigorta devreye girdi.\n\n Zarar karşılandı ama müşteri memnuniyeti düştü.\n\n-15 itibar", title="Sonuç")
         elif choice == "3":
-
             if random.randint(1, 100) <= 50:
-
                 train.money += 800
-
-                print("""
-👨‍🔧 Suçlu çalışan bulundu.
-
-📦 Kargo kurtarıldı.
-
-+800₺
-""")
-
+                ui.show(" Suçlu çalışan bulundu.\n\n Kargo kurtarıldı.\n\n+800₺", title="Sonuç")
             else:
-
                 train.reputation -= 20
-
-                print("""
-😡 Çalışanlar tepki gösterdi.
-
-🚨 İç huzursuzluk başladı.
-
--20 İtibar
-""")
-
+                ui.show(" Çalışanlar tepki gösterdi.\n\n İç huzursuzluk başladı.\n\n-20 itibar", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-Hiçbir işlem yapılmadı.
-""")
+            ui.show(" Geçersiz seçim.\nHiçbir işlem yapılmadı.", title="Sonuç")

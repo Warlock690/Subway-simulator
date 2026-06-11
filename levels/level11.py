@@ -1,182 +1,46 @@
-# level11.py
-
-import time
-
-
 class FinalCrashEvent:
-
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║         LEVEL 11 - SON KÖPRÜ         ║
-╚══════════════════════════════════════╝
-
-🌑 Saat 03:17
-
-🚂 Son istasyona sadece 5 km kaldı.
-
-Aniden...
-
-💥 KORKUNÇ BİR PATLAMA!
-
-🌉 Önündeki köprü çökmeye başladı.
-⚙️ Fren sistemi cevap vermiyor.
-⛽ Yakıt hattı hasar gördü.
-
-Hız: 120 km/s
-""")
-
-        time.sleep(2)
-
-        print("""
-Ne yapacaksın?
-
-1️⃣ Acil Tahliye Başlat
-2️⃣ Motoru Zorla Durdur
-3️⃣ Son Anonsu Yap
-""")
-
-        choice = input("Seçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Saat 03:17\n\n"
+            " Son istasyona sadece 5 km kaldı.\n\n"
+            "Aniden...\n\n"
+            " KORKUNÇ BİR PATLAMA!\n\n"
+            " Önündeki köprü çökmeye başladı.\n"
+            " Fren sistemi cevap vermiyor.\n"
+            " Yakıt hattı hasar gördü.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "Acil Tahliye Başlat"),
+                ("2", "Motoru Zorla Durdur"),
+                ("3", "Son Anonsu Yap"),
+            ],
+            title="Son Köprü",
+        )
 
         rescued = 0
 
         if choice == "1":
-
             rescued = 80
-
-            print("""
-🚨 Acil tahliye başlatıldı.
-
-👥 Yolcuların büyük kısmı
-vagonlardan atlamayı başardı.
-""")
-
+            ui.show(" Acil tahliye başlatıldı.\n\n Yolcuların büyük kısmı\nvagonlardan atlamayı başardı.", title="Sonuç")
         elif choice == "2":
-
             rescued = 30
-
-            print("""
-⚙️ Motor zorlandı.
-
-🚂 Bir anlığına yavaşladı...
-
-Ama artık çok geç.
-""")
-
+            ui.show(" Motor zorlandı.\n\n Bir anlığına yavaşladı...\nAma artık çok geç.", title="Sonuç")
         elif choice == "3":
-
             rescued = 60
-
-            print("""
-📻 Son anons yapıldı.
-
-😌 Yolcular sakinleşti.
-Panik büyük ölçüde önlendi.
-""")
-
+            ui.show(" Son anons yapıldı.\n\n Yolcular sakinleşti.\nPanik büyük ölçüde önlendi.", title="Sonuç")
         else:
-
             rescued = 10
+            ui.show(" Kararsız kaldın.\n\n⏳ Zaman tükendi.", title="Sonuç")
 
-            print("""
-⚠️ Kararsız kaldın.
+        ui.show(" KÖPRÜ ÇÖKÜYOR...\n\n RAY TEMASI KAYBEDİLDİ...\n\n SİSTEM HATASI...\n\n\n\n\n UÇURUM!", title="Son")
 
-⏳ Zaman tükendi.
-""")
-
-        time.sleep(2)
-
-        print("""
-⚠️ KÖPRÜ ÇÖKÜYOR...
-""")
-
-        time.sleep(1)
-
-        print("""
-⚠️ RAY TEMASI KAYBEDİLDİ...
-""")
-
-        time.sleep(1)
-
-        print("""
-⚠️ SİSTEM HATASI...
-""")
-
-        time.sleep(2)
-
-        print("""
-🚂═══════════════▶
-""")
-
-        time.sleep(0.5)
-
-        print("""
-🚂════════════▶
-""")
-
-        time.sleep(0.5)
-
-        print("""
-🚂════════▶
-""")
-
-        time.sleep(0.5)
-
-        print("""
-🚂════▶
-""")
-
-        time.sleep(0.5)
-
-        print("""
-🚂══▶
-""")
-
-        time.sleep(0.5)
-
-        print("""
-🚂
-""")
-
-        time.sleep(1)
-
-        print("""
-💥
-💥💥
-💥💥💥
-
-🌉 UÇURUM!
-""")
-
-        time.sleep(2)
-
-        print("""
-██████████████████████████████
-
-📡 SİNYAL KAYBI...
-
-██████████████████████████████
-""")
-
-        time.sleep(2)
-
-        print(f"""
-╔══════════════════════════════════════╗
-║               SON                    ║
-╚══════════════════════════════════════╝
-
-🚂 Tren Kara Vadi uçurumundan düştü.
-
-💀 Yolculuk burada sona erdi.
-
-📊 SON İSTATİSTİKLER
-
-💰 Para: {train.money}₺
-⭐ İtibar: {train.reputation}
-⏰ Süre: {train.time} dk
-
-👥 Kurtarılan Yolcu: {rescued}/100
-
-Teşekkürler oynadığın için.
-""")
+        ui.show(
+            " Tren Kara Vadi uçurumundan düştü.\n\n"
+            " Yolculuk burada sona erdi.\n\n"
+            f" Para: {train.money}₺\n"
+            f" İtibar: {train.reputation}\n"
+            f"⏰ Süre: {train.time} dk\n\n"
+            f" Kurtarılan Yolcu: {rescued}/100\n\n"
+            "Teşekkürler oynadığın için.",
+            title="SON",
+        )

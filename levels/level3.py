@@ -1,117 +1,39 @@
-# level3.py
-
 import random
 
 
 class EngineOverheatEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║      LEVEL 3 - MOTOR AŞIRI ISINDI    ║
-╚══════════════════════════════════════╝
-
-⚙️ Tren normal hızda ilerlerken
-motor bölümünden alarm sesi geliyor.
-
-🌡️ Sıcaklık kritik seviyeye ulaştı.
-
-Eğer müdahale edilmezse motor tamamen
-kullanılamaz hale gelebilir.
-
-Şu an:
-⚙️ Motor risk altında
-⏰ Zaman önemli
-💰 Tamir masrafları yüksek olabilir
-
-Ne yapacaksın?
-
-1️⃣ Acil Bakım Yap
-   -400₺
-   +15 dakika
-
-2️⃣ Hızı Düşür
-   +10 dakika
-   Arıza riski devam eder
-
-3️⃣ Devam Et
-   Süre kaybetmezsin
-   Ama motor patlayabilir
-""")
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Tren normal hızda ilerlerken\n"
+            "motor bölümünden alarm sesi geliyor.\n\n"
+            " Sıcaklık kritik seviyeye ulaştı.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "Acil Bakım Yap  (-400₺, +15 dk)"),
+                ("2", "Hızı Düşür  (+10 dk, risk devam eder)"),
+                ("3", "Devam Et  (motor patlayabilir)"),
+            ],
+            title="Motor Aşırı Isındı",
+        )
 
         if choice == "1":
-
             train.money -= 400
             train.time += 15
-
-            print("""
-🔧 Bakım tamamlandı.
-
-⚙️ Motor tekrar güvenli çalışıyor.
-
--400₺
-+15 dakika
-""")
-
+            ui.show(" Bakım tamamlandı.\n\n Motor tekrar güvenli çalışıyor.\n\n-400₺  +15 dk", title="Sonuç")
         elif choice == "2":
-
             train.time += 10
-
             if random.randint(1, 100) <= 70:
-
-                print("""
-🚂 Hız düşürüldü.
-
-🌡️ Motor soğumaya başladı.
-
-+10 dakika
-""")
-
+                ui.show(" Hız düşürüldü.\n\n Motor soğumaya başladı.\n\n+10 dk", title="Sonuç")
             else:
-
                 train.money -= 250
-
-                print("""
-⚠️ Sorun büyüdü.
-
-🔧 Ek bakım gerekti.
-
--250₺
-+10 dakika
-""")
-
+                ui.show(" Sorun büyüdü.\n\n Ek bakım gerekti.\n\n-250₺  +10 dk", title="Sonuç")
         elif choice == "3":
-
             if random.randint(1, 100) <= 40:
-
-                print("""
-😎 Risk aldın ve kazandın.
-
-🚂 Tren yoluna devam etti.
-""")
-
+                ui.show(" Risk aldın ve kazandın.\n\n Tren yoluna devam etti.", title="Sonuç")
             else:
-
                 train.money -= 800
                 train.reputation -= 20
                 train.time += 30
-
-                print("""
-💥 MOTOR ARIZASI!
-
-🚂 Tren yolda kaldı.
-😡 Yolcular şikayetçi.
-
--800₺
--20 itibar
-+30 dakika
-""")
-
+                ui.show(" MOTOR ARIZASI!\n\n Tren yolda kaldı.\n Yolcular şikayetçi.\n\n-800₺  -20 itibar  +30 dk", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-Hiçbir işlem yapılmadı.
-""")
+            ui.show(" Geçersiz seçim.\nHiçbir işlem yapılmadı.", title="Sonuç")

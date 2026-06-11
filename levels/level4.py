@@ -1,90 +1,33 @@
-# level4.py
-
 class IronTownEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║      LEVEL 4 - DEMİRKÖY İSTASYONU    ║
-╚══════════════════════════════════════╝
-
-🏘️ Tren Demirköy'e ulaştı.
-
-Kasaba sakin görünüyor ancak burada
-çeşitli hizmetler satın alabilirsin.
-
-💰 Mevcut Paran: {}₺
-
-1️⃣ Tamirhane
-   Motor bakımı
-   -300₺
-
-2️⃣ Market
-   Erzak al
-   +10 İtibar
-   -200₺
-
-3️⃣ Dinlen ve Yola Devam Et
-   Ücretsiz
-""".format(train.money))
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name="Demirkoy"):
+        choice = ui.choose(
+            f" {town_name}'e ulaştın.\n\n"
+            f" Mevcut Paran: {train.money}₺\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", f"Tamirhane  (-300₺)" + ("  (yetersiz bakiye)" if train.money < 300 else "")),
+                ("2", f"Market  (-200₺, +10 itibar)" + ("  (yetersiz bakiye)" if train.money < 200 else "")),
+                ("3", "Dinlen ve Yola Devam Et  (ücretsiz)"),
+            ],
+            title="Istasyon",
+        )
 
         if choice == "1":
-
             if train.money >= 300:
-
                 train.money -= 300
-
                 if hasattr(train, "engine_health"):
                     train.engine_health = min(100, train.engine_health + 30)
-
-                print("""
-🔧 Tamir tamamlandı.
-
-⚙️ Motor durumu iyileştirildi.
-
--300₺
-""")
-
+                ui.show(" Tamir tamamlandı.\n\n Motor durumu iyileştirildi.\n\n-300₺", title="Sonuç")
             else:
-
-                print("""
-❌ Yetersiz para.
-""")
-
+                ui.show(" Yetersiz para.", title="Sonuç")
         elif choice == "2":
-
             if train.money >= 200:
-
                 train.money -= 200
                 train.reputation += 10
-
-                print("""
-🛒 Market alışverişi yapıldı.
-
-🍞 Erzaklar yenilendi.
-😊 Yolcular memnun.
-
--200₺
-+10 İtibar
-""")
-
+                ui.show(" Market alışverişi yapıldı.\n\n Erzaklar yenilendi.\n Yolcular memnun.\n\n-200₺  +10 itibar", title="Sonuç")
             else:
-
-                print("""
-❌ Yetersiz para.
-""")
-
+                ui.show(" Yetersiz para.", title="Sonuç")
         elif choice == "3":
-
-            print("""
-🚂 Kısa bir moladan sonra
-yolculuk devam ediyor.
-""")
-
+            ui.show(" Kısa bir moladan sonra yolculuk devam ediyor.", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-""")
+            ui.show(" Geçersiz seçim.", title="Sonuç")

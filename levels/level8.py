@@ -1,110 +1,38 @@
-# level8.py
-
 import random
 
 
 class BlizzardEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║       LEVEL 8 - TİPİ FELAKETİ        ║
-╚══════════════════════════════════════╝
-
-❄️ Şiddetli bir tipi başladı.
-
-🌨️ Görüş mesafesi neredeyse sıfır.
-🚂 Rayların bir kısmı kar altında kaldı.
-
-Yolcular:
-🥶 Üşüyor
-😟 Endişeli
-
-Durum:
-⛽ Yakıt sınırlı
-⏰ Teslimat gecikiyor
-
-Ne yapacaksın?
-
-1️⃣ Treni Durdur ve Bekle
-   Güvenli
-   +40 dakika
-
-2️⃣ Kar Temizleme Ekibi Çağır
-   -600₺
-   +15 dakika
-
-3️⃣ Yavaş İlerle
-   Riskli
-   Yakıt tüketir
-""")
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Şiddetli bir tipi başladı.\n\n"
+            " Görüş mesafesi neredeyse sıfır.\n"
+            " Rayların bir kısmı kar altında kaldı.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "Treni Durdur ve Bekle  (+40 dk, -5 itibar)"),
+                ("2", "Kar Temizleme Ekibi Çağır  (-600₺, +15 dk)"),
+                ("3", "Yavaş İlerle  (-20 yakıt, riskli)"),
+            ],
+            title="Tipi Felaketi",
+        )
 
         if choice == "1":
-
             train.time += 40
             train.reputation -= 5
-
-            print("""
-🛑 Tren durduruldu.
-
-❄️ Tipinin geçmesi beklendi.
-
-+40 dakika
--5 İtibar
-""")
-
+            ui.show(" Tren durduruldu.\n\n Tipinin geçmesi beklendi.\n\n+40 dk  -5 itibar", title="Sonuç")
         elif choice == "2":
-
             train.money -= 600
             train.time += 15
-
-            print("""
-🚜 Kar temizleme araçları geldi.
-
-🚂 Raylar açıldı.
-
--600₺
-+15 dakika
-""")
-
+            ui.show(" Kar temizleme araçları geldi.\n\n Raylar açıldı.\n\n-600₺  +15 dk", title="Sonuç")
         elif choice == "3":
-
             train.fuel -= 20
-
             if random.randint(1, 100) <= 60:
-
                 train.time += 10
-
-                print("""
-🚂 Dikkatli şekilde ilerledin.
-
-🌨️ Fırtına atlatıldı.
-
--20 Yakıt
-+10 dakika
-""")
-
+                ui.show(" Dikkatli şekilde ilerledin.\n\n Fırtına atlatıldı.\n\n-20 yakıt  +10 dk", title="Sonuç")
             else:
-
                 train.money -= 800
                 train.time += 30
                 train.reputation -= 15
-
-                print("""
-💥 Tren kara saplandı!
-
-🚨 Kurtarma ekibi çağrıldı.
-
--800₺
-+30 dakika
--15 İtibar
-""")
-
+                ui.show(" Tren kara saplandı!\n\n Kurtarma ekibi çağrıldı.\n\n-800₺  +30 dk  -15 itibar", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-Hiçbir işlem yapılmadı.
-""")
+            ui.show(" Geçersiz seçim.\nHiçbir işlem yapılmadı.", title="Sonuç")

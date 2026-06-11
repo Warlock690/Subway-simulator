@@ -1,104 +1,36 @@
-# level2.py
-
 import random
 
 
 class RatInfestationEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║       LEVEL 2 - FARE İSTİLASI        ║
-╚══════════════════════════════════════╝
-
-🐀 Gece vardiyası sırasında yük vagonundan
-garip sesler geliyor.
-
-Kontrol ettiğinde onlarca farenin
-erzak kolilerini kemirdiğini fark ettin.
-
-Şu an:
-📦 Erzaklar risk altında
-😷 Hastalık yayılabilir
-💰 Kargonun değeri yüksek
-
-Ne yapacaksın?
-
-1️⃣ İlaçlama Ekibi Çağır
-   -300₺
-   +10 dakika
-
-2️⃣ Vagonu Mühürle
-   Kargo kurtulur
-   Yolculuk gecikir
-
-3️⃣ Hiçbir Şey Yapma
-   Para kaybetmezsin
-   Ama fareler çoğalabilir
-""")
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Gece vardiyası sırasında yük vagonundan\n"
+            "garip sesler geliyor.\n\n"
+            "Kontrol ettiğinde onlarca farenin\n"
+            "erzak kolilerini kemirdiğini fark ettin.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "İlaçlama Ekibi Çağır  (-300₺, +10 dk)"),
+                ("2", "Vagonu Mühürle  (-100₺, +20 dk)"),
+                ("3", "Hiçbir Şey Yapma  (riskli)"),
+            ],
+            title="Fare İstilası",
+        )
 
         if choice == "1":
-
             train.money -= 300
             train.time += 10
-
-            print("""
-🧪 İlaçlama başarılı!
-
-🐀 Fareler temizlendi.
-📦 Kargo kurtarıldı.
-
--300₺
-+10 dakika
-""")
-
+            ui.show(" İlaçlama başarılı!\n\n Fareler temizlendi.\n Kargo kurtarıldı.\n\n-300₺  +10 dk", title="Sonuç")
         elif choice == "2":
-
             train.money -= 100
             train.time += 20
-
-            print("""
-🔒 Vagon mühürlendi.
-
-📦 Kargonun çoğu kurtarıldı.
-🚂 Yolculuk gecikti.
-
--100₺
-+20 dakika
-""")
-
+            ui.show(" Vagon mühürlendi.\n\n Kargonun çoğu kurtarıldı.\n Yolculuk gecikti.\n\n-100₺  +20 dk", title="Sonuç")
         elif choice == "3":
-
             if random.randint(1, 100) <= 50:
-
-                print("""
-😌 Şanslısın.
-
-🐀 Fareler fazla yayılmadı.
-
-Kayıp yok.
-""")
-
+                ui.show(" Şanslısın.\n\n Fareler fazla yayılmadı.\n\nKayıp yok.", title="Sonuç")
             else:
-
                 train.money -= 500
                 train.reputation -= 15
-
-                print("""
-💥 Felaket!
-
-🐀 Fareler tüm vagona yayıldı.
-📦 Kargonun yarısı zarar gördü.
-
--500₺
--15 itibar
-""")
-
+                ui.show(" Felaket!\n\n Fareler tüm vagona yayıldı.\n Kargonun yarısı zarar gördü.\n\n-500₺  -15 itibar", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-Hiçbir işlem yapılmadı.
-""")
+            ui.show(" Geçersiz seçim.\nHiçbir işlem yapılmadı.", title="Sonuç")

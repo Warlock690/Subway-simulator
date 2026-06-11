@@ -94,23 +94,17 @@ class StartScreen:
         frame.pack(fill=tk.BOTH, expand=True)
 
         # figlet-style ALEV
-        canvas = tk.Canvas(frame, bg="#111111", highlightthickness=0, height=200)
-        canvas.pack(fill=tk.X, pady=(80, 10))
-
-        canvas.create_text(
-            canvas.winfo_width() // 2 if canvas.winfo_width() > 1 else 700,
-            100, text="ALEV", fill="#ff6600",
-            font=("Arial Black", 80, "bold"), tags="title"
+        ascii_art = (
+            " _    _     _______     __\n"
+            "/ \\  | |   | ____\\ \\   / /\n"
+            "/ _ \\ | |   |  _|  \\ \\ / /\n"
+            "/ ___ \\| |___| |___  \\ V /\n"
+            "/_/   \\_\\_____|_____|  \\_/"
         )
-        canvas.bind("<Configure>", lambda e: (
-            canvas.coords("title", e.width // 2, 100),
-            canvas.coords("sub", e.width // 2, 150),
-        ))
-
-        canvas.create_text(
-            700, 150, text="TREN HARİTASI OYUNU",
-            fill="#ff9944", font=("Consolas", 16, "bold"), tags="sub"
-        )
+        tk.Label(
+            frame, text=ascii_art, fg="#ff6600", bg="#111111",
+            font=("Consolas", 20, "bold"), justify=tk.CENTER
+        ).pack(pady=(80, 10))
 
         # timer
         self.timer_label = tk.Label(
@@ -293,22 +287,23 @@ class GameScreen:
 
         if is_current and self.town_index < n:
             x = start_x + self.town_index * spacing
-            c.create_text(x, y - 1, text="🚂", font=("Arial", 20))
+            c.create_text(x, y - 1, text="T", font=("Arial", 16, "bold"), fill="#ffdd00")
 
     def _update_status(self):
         line_name = LINE_ORDER[self.line_index]
         line = lines[line_name]
         t = self.train
         self.status_label.config(
-            text=f"  🚂 {line.name}  |  {self.town_index+1}/{len(line.towns)} "
+            text=f"  {line.name}  |  {self.town_index+1}/{len(line.towns)} "
                  f"{line.towns[self.town_index]}  |  "
-                 f"💰 {t.money}₺  ⭐ {t.reputation}  ⛽ {t.fuel}  ⏱ {t.time}dk"
+                 f"Para: {t.money}  Itibar: {t.reputation}  Yakit: {t.fuel}"
         )
 
     def trigger_event(self):
         cls = LEVEL_EVENT_CLASSES[self.line_index]
         ui = EventUI(self.root)
-        cls().play(self.train, ui)
+        town_name = lines[LINE_ORDER[self.line_index]].towns[self.town_index]
+        cls().play(self.train, ui, town_name)
 
     def _on_space(self, e=None):
         line_name = LINE_ORDER[self.line_index]
@@ -317,7 +312,7 @@ class GameScreen:
         if self.town_index == self.event_town[line_name]:
             self.trigger_event()
 
-        if self.train.money <= 0 and self.train.reputation <= 0:
+        if self.train.money <= 0 or self.train.reputation <= 0 or self.train.fuel <= 0:
             self.app.game_over()
             return
 

@@ -1,83 +1,35 @@
-# level9.py
-
 import random
 
 
 class UnknownDiseaseEvent:
-    def play(self, train):
-
-        print("""
-╔══════════════════════════════════════╗
-║    LEVEL 9 - BİLİNMEYEN HASTALIK     ║
-╚══════════════════════════════════════╝
-
-😷 Birkaç yolcu yüksek ateş şikayetiyle
-revir vagonuna getirildi.
-
-Saatler içinde vaka sayısı arttı.
-
-🚂 En yakın hastane 120 km uzakta.
-
-1️⃣ Karantina
-2️⃣ Devam Et
-3️⃣ Hastane Rotası
-""")
-
-        choice = input("\nSeçim > ")
+    def play(self, train, ui, town_name=None):
+        choice = ui.choose(
+            " Birkaç yolcu yüksek ateş şikayetiyle\n"
+            "revir vagonuna getirildi.\n\n"
+            "Saatler içinde vaka sayısı arttı.\n\n"
+            " En yakın hastane 120 km uzakta.\n\n"
+            "Ne yapacaksın?",
+            [
+                ("1", "Karantina  (+20 dk, -5 itibar)"),
+                ("2", "Devam Et  (riskli)"),
+                ("3", "Hastane Rotası  (+30 dk, -10 yakıt)"),
+            ],
+            title="Bilinmeyen Hastalık",
+        )
 
         if choice == "1":
-
             train.time += 20
             train.reputation -= 5
-
-            print("""
-🚪 Karantina uygulandı.
-
-🛑 Vagon izole edildi.
-
-+20 dakika
--5 itibar
-""")
-
+            ui.show(" Karantina uygulandı.\n\n Vagon izole edildi.\n\n+20 dk  -5 itibar", title="Sonuç")
         elif choice == "2":
-
             if random.randint(1, 100) <= 50:
-
-                print("""
-😌 Yanlış alarm.
-
-🚂 Yolculuk devam ediyor.
-""")
-
+                ui.show(" Yanlış alarm.\n\n Yolculuk devam ediyor.", title="Sonuç")
             else:
-
                 train.reputation -= 25
-
-                print("""
-☣️ Hastalık yayıldı!
-
-🚨 Durum kontrol dışı.
-
--25 itibar
-""")
-
+                ui.show(" Hastalık yayıldı!\n\n Durum kontrol dışı.\n\n-25 itibar", title="Sonuç")
         elif choice == "3":
-
             train.time += 30
             train.fuel -= 10
-
-            print("""
-🏥 Hastane rotasına girildi.
-
-🚂 Alternatif güzergah seçildi.
-
-+30 dakika
--10 yakıt
-""")
-
+            ui.show(" Hastane rotasına girildi.\n\n Alternatif güzergah seçildi.\n\n+30 dk  -10 yakıt", title="Sonuç")
         else:
-
-            print("""
-❌ Geçersiz seçim.
-Hiçbir işlem yapılmadı.
-""")
+            ui.show(" Geçersiz seçim.\nHiçbir işlem yapılmadı.", title="Sonuç")
