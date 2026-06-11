@@ -189,6 +189,7 @@ class GameScreen:
             line = lines[name]
             self.event_town[name] = random.randrange(len(line.towns))
 
+        self._busy = False
         self.root.bind("<space>", self._on_space)
 
         self.canvases = {}
@@ -306,6 +307,10 @@ class GameScreen:
         cls().play(self.train, ui, town_name)
 
     def _on_space(self, e=None):
+        if self._busy:
+            return
+        self._busy = True
+
         line_name = LINE_ORDER[self.line_index]
         line = lines[line_name]
 
@@ -314,6 +319,7 @@ class GameScreen:
 
         if self.train.money <= 0 or self.train.reputation <= 0 or self.train.fuel <= 0:
             self.app.game_over()
+            self._busy = False
             return
 
         self.town_index += 1
@@ -323,9 +329,11 @@ class GameScreen:
             self.town_index = 0
             if self.line_index >= len(LINE_ORDER):
                 self.app.game_over(won=True)
+                self._busy = False
                 return
 
         self._draw_all()
+        self._busy = False
 
 
 class LoseScreen:
