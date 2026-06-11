@@ -40,12 +40,151 @@ LEVEL_EVENT_CLASSES = [
 ]
 
 
-class GameGUI:
+class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Tren Oyunu")
         self.root.configure(bg="#111111")
         self.root.geometry("1400x750")
+
+        self.timer_remaining = 600
+        self.timer_job = None
+        self.game = None
+
+        self.show_start()
+
+    def clear(self):
+        for w in self.root.winfo_children():
+            w.destroy()
+        if self.timer_job:
+            self.root.after_cancel(self.timer_job)
+            self.timer_job = None
+
+    def show_start(self):
+        self.clear()
+        self.timer_remaining = 600
+        StartScreen(self.root, self)
+
+    def start_game(self):
+        self.clear()
+        self.game = GameScreen(self.root, self)
+        self._tick()
+
+    def _tick(self):
+        if self.timer_remaining > 0:
+            self.timer_remaining -= 1
+            if self.game:
+                self.game.update_timer()
+            self.timer_job = self.root.after(1000, self._tick)
+        else:
+            self.game_over()
+
+    def game_over(self, won=False):
+        self.game = None
+        self.clear()
+        LoseScreen(self.root, self, won=won)
+
+
+class StartScreen:
+    def __init__(self, root, app):
+        self.root = root
+        self.app = app
+
+        frame = tk.Frame(root, bg="#111111")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        # figlet-style ALEV
+        canvas = tk.Canvas(frame, bg="#111111", highlightthickness=0, height=200)
+        canvas.pack(fill=tk.X, pady=(80, 10))
+
+        canvas.create_text(
+            canvas.winfo_width() // 2 if canvas.winfo_width() > 1 else 700,
+            100, text="ALEV", fill="#ff6600",
+            font=("Arial Black", 80, "bold"), tags="title"
+        )
+        canvas.bind("<Configure>", lambda e: (
+            canvas.coords("title", e.width // 2, 100),
+            canvas.coords("sub", e.width // 2, 150),
+        ))
+
+        canvas.create_text(
+            700, 150, text="TREN HARİTASI OYUNU",
+            fill="#ff9944", font=("Consolas", 16, "bold"), tags="sub"
+        )
+
+        # timer
+        self.timer_label = tk.Label(
+            frame, text="KALAN SÜRE  10:00", fg="white", bg="#111111",
+            font=("Consolas", 22, "bold")
+        )
+        self.timer_label.pack(pady=20)
+
+        # buttons
+        btn_frame = tk.Frame(frame, bg="#111111")
+        btn_frame.pack(pady=20)
+
+        tk.Button(
+            btn_frame, text="BAŞLAT", fg="white", bg="#2a6a2a",
+            activeforeground="white", activebackground="#3a8a3a",
+            font=("Consolas", 18, "bold"), width=12, height=1, bd=0,
+            cursor="hand2", command=app.start_game
+        ).pack(pady=6)
+
+        tk.Button(
+            btn_frame, text="KONTROLLER", fg="white", bg="#333366",
+            activeforeground="white", activebackground="#444488",
+            font=("Consolas", 14, "bold"), width=12, height=1, bd=0,
+            cursor="hand2", command=self.show_controls
+        ).pack(pady=6)
+
+        self._update_timer()
+
+    def _update_timer(self):
+        m, s = divmod(self.app.timer_remaining, 60)
+        self.timer_label.config(text=f"KALAN SÜRE  {m:02d}:{s:02d}")
+
+    def show_controls(self):
+        win = tk.Toplevel(self.root)
+        win.title("Kontroller")
+        win.configure(bg="#111111")
+        win.geometry("500x350")
+        win.resizable(False, False)
+
+        tk.Label(
+            win, text="KONTROLLER", fg="#ff6600", bg="#111111",
+            font=("Consolas", 18, "bold")
+        ).pack(pady=(25, 15))
+
+        controls = [
+            ("SPACE", "Treni bir sonraki durağa ilerlet"),
+        ]
+
+        for key, desc in controls:
+            row = tk.Frame(win, bg="#111111")
+            row.pack(fill=tk.X, padx=40, pady=6)
+
+            tk.Label(
+                row, text=key, fg="#ff9944", bg="#111111",
+                font=("Consolas", 14, "bold"), width=12, anchor=tk.W
+            ).pack(side=tk.LEFT)
+
+            tk.Label(
+                row, text=desc, fg="white", bg="#111111",
+                font=("Consolas", 12), anchor=tk.W
+            ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        tk.Button(
+            win, text="KAPAT", fg="white", bg="#444444",
+            activeforeground="white", activebackground="#555555",
+            font=("Consolas", 12, "bold"), bd=0, cursor="hand2",
+            command=win.destroy
+        ).pack(pady=20)
+
+
+class GameScreen:
+    def __init__(self, root, app):
+        self.root = root
+        self.app = app
 
         self.train = Train()
         self.line_index = 0
@@ -68,9 +207,15 @@ class GameGUI:
 
         self.status_label = tk.Label(
             bar, text="", fg="white", bg="#1a1a2e",
-            font=("Consolas", 14, "bold")
+            font=("Consolas", 13, "bold")
         )
-        self.status_label.pack(pady=6)
+        self.status_label.pack(side=tk.LEFT, padx=10, pady=6)
+
+        self.timer_label = tk.Label(
+            bar, text="", fg="#ff9944", bg="#1a1a2e",
+            font=("Consolas", 13, "bold")
+        )
+        self.timer_label.pack(side=tk.RIGHT, padx=10, pady=6)
 
         main = tk.Frame(self.root, bg="#111111")
         main.pack(fill=tk.BOTH, expand=True, padx=10, pady=(4, 8))
@@ -93,11 +238,9 @@ class GameGUI:
 
             self.canvases[line_name] = c
 
-        help_lbl = tk.Label(
-            self.root, text="BOŞLUK (SPACE) ile ilerle",
-            fg="#888888", bg="#111111", font=("Consolas", 11, "bold")
-        )
-        help_lbl.pack(pady=(0, 6))
+    def update_timer(self):
+        m, s = divmod(self.app.timer_remaining, 60)
+        self.timer_label.config(text=f"⏱ {m:02d}:{s:02d}")
 
     def _draw_all(self):
         for line_name in LINE_ORDER:
@@ -164,8 +307,8 @@ class GameGUI:
 
     def trigger_event(self):
         cls = LEVEL_EVENT_CLASSES[self.line_index]
-        messagebox.showwarning("SEVİYE OLAYI", f"{cls.__name__} başladı!")
-        cls().play(self.train, self.root)
+        ui = EventUI(self.root)
+        cls().play(self.train, ui)
 
     def _on_space(self, e=None):
         line_name = LINE_ORDER[self.line_index]
@@ -175,8 +318,7 @@ class GameGUI:
             self.trigger_event()
 
         if self.train.money <= 0 and self.train.reputation <= 0:
-            messagebox.showerror("GAME OVER", "Para ve itibar bitti!")
-            self.root.destroy()
+            self.app.game_over()
             return
 
         self.town_index += 1
@@ -185,14 +327,117 @@ class GameGUI:
             self.line_index += 1
             self.town_index = 0
             if self.line_index >= len(LINE_ORDER):
-                messagebox.showinfo("BİTTİ", "Tüm hatlar tamamlandı!")
-                self.root.destroy()
+                self.app.game_over(won=True)
                 return
 
         self._draw_all()
 
 
+class LoseScreen:
+    def __init__(self, root, app, won=False):
+        self.root = root
+        self.app = app
+
+        frame = tk.Frame(root, bg="#111111")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        if won:
+            title_t = "TÜM HATLAR\nTAMAMLANDI!"
+            title_f = "#44dd44"
+            sub_t = "Tebrikler, oyunu kazandın!"
+            sub_f = "#88ff88"
+        else:
+            title_t = "OYUN BİTTİ"
+            title_f = "#dd4444"
+            sub_t = "Süre doldu veya kaynakların tükendi."
+            sub_f = "#ff8888"
+
+        tk.Label(
+            frame, text=title_t, fg=title_f, bg="#111111",
+            font=("Arial Black", 48, "bold"), justify=tk.CENTER
+        ).pack(pady=(120, 10))
+
+        tk.Label(
+            frame, text=sub_t, fg=sub_f, bg="#111111",
+            font=("Consolas", 14, "bold")
+        ).pack(pady=10)
+
+        m, s = divmod(app.timer_remaining, 60)
+        tk.Label(
+            frame, text=f"KALAN SÜRE: {m:02d}:{s:02d}",
+            fg="white", bg="#111111",
+            font=("Consolas", 16, "bold")
+        ).pack(pady=5)
+
+        tk.Button(
+            frame, text="TEKRAR DENE", fg="white", bg="#2a6a2a",
+            activeforeground="white", activebackground="#3a8a3a",
+            font=("Consolas", 18, "bold"), width=14, height=1, bd=0,
+            cursor="hand2", command=app.show_start
+        ).pack(pady=30)
+
+
+class EventUI:
+    def __init__(self, root):
+        self.root = root
+
+    def show(self, text, title="Bilgi"):
+        win = tk.Toplevel(self.root)
+        win.title(title)
+        win.configure(bg="#000000")
+        win.geometry("1000x650")
+        win.resizable(False, False)
+
+        frame = tk.Frame(win, bg="#000000")
+        frame.pack(fill=tk.BOTH, expand=True, padx=30, pady=30)
+
+        tk.Label(
+            frame, text=text, fg="white", bg="#000000",
+            font=("Consolas", 14), justify=tk.LEFT, wraplength=900
+        ).pack(expand=True)
+
+        tk.Button(
+            win, text="TAMAM", fg="white", bg="#222222",
+            activeforeground="white", activebackground="#333333",
+            font=("Consolas", 14, "bold"), bd=0, cursor="hand2",
+            command=win.destroy
+        ).pack(pady=20)
+
+        win.grab_set()
+        win.transient(self.root)
+        self.root.wait_window(win)
+
+    def choose(self, text, choices, title="Seçim"):
+        result = [None]
+
+        win = tk.Toplevel(self.root)
+        win.title(title)
+        win.configure(bg="#000000")
+        win.geometry("1000x700")
+        win.resizable(False, False)
+
+        tk.Label(
+            win, text=text, fg="white", bg="#000000",
+            font=("Consolas", 14), justify=tk.LEFT, wraplength=920
+        ).pack(padx=30, pady=(30, 15))
+
+        for key, label in choices:
+            tk.Button(
+                win, text=f"  {key}  {label}",
+                fg="white", bg="#1a1a2e",
+                activeforeground="white", activebackground="#2a2a4e",
+                font=("Consolas", 13, "bold"), bd=1, cursor="hand2",
+                command=lambda k=key: [result.__setitem__(0, k), win.destroy()]
+            ).pack(fill=tk.X, padx=40, pady=4)
+
+        win.grab_set()
+        win.transient(self.root)
+        self.root.wait_window(win)
+
+        return result[0]
+
+
 if __name__ == "__main__":
     root = tk.Tk()
-    app = GameGUI(root)
+    app = App(root)
     root.mainloop()
