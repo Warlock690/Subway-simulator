@@ -15,9 +15,6 @@ her durakta karşılaştığın olaylara doğru kararlar vererek trenini hedefin
 
 ### Seviye 11 — Son Çarpışma
 
-![Son Çarpışma 1](Screenshot%20from%202026-06-11%2022-44-37.png)
-![Son Çarpışma 2](Screenshot%20from%202026-06-11%2022-44-51.png)
-![Son Çarpışma 3](Screenshot%20from%202026-06-11%2022-44-57.png)
 
 ## Çalıştırma
 
