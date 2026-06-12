@@ -93,7 +93,6 @@ class StartScreen:
         frame = tk.Frame(root, bg="#111111")
         frame.pack(fill=tk.BOTH, expand=True)
 
-        # figlet-style ALEV
         ascii_art = (
             " _    _     _______     __\n"
             "/ \\  | |   | ____\\ \\   / /\n"
@@ -106,14 +105,12 @@ class StartScreen:
             font=("Consolas", 20, "bold"), justify=tk.CENTER
         ).pack(pady=(80, 10))
 
-        # timer
         self.timer_label = tk.Label(
             frame, text="KALAN SÜRE  10:00", fg="white", bg="#111111",
             font=("Consolas", 22, "bold")
         )
         self.timer_label.pack(pady=20)
 
-        # buttons
         btn_frame = tk.Frame(frame, bg="#111111")
         btn_frame.pack(pady=20)
 
