@@ -114,18 +114,18 @@ class StartScreen:
         btn_frame = tk.Frame(frame, bg="#111111")
         btn_frame.pack(pady=20)
 
-        tk.Button(
-            btn_frame, text="BAŞLAT", fg="white", bg="#2a6a2a",
-            activeforeground="white", activebackground="#3a8a3a",
-            font=("Consolas", 18, "bold"), width=12, height=1, bd=0,
-            cursor="hand2", command=app.start_game
+        _make_button(
+            btn_frame, text="BAŞLAT", bg="#2a6a2a", fg="white",
+            activebackground="#3a8a3a",
+            font=("Consolas", 18, "bold"), width=12, height=1,
+            command=app.start_game,
         ).pack(pady=6)
 
-        tk.Button(
-            btn_frame, text="KONTROLLER", fg="white", bg="#333366",
-            activeforeground="white", activebackground="#444488",
-            font=("Consolas", 14, "bold"), width=12, height=1, bd=0,
-            cursor="hand2", command=self.show_controls
+        _make_button(
+            btn_frame, text="KONTROLLER", bg="#333366", fg="white",
+            activebackground="#444488",
+            font=("Consolas", 14, "bold"), width=12, height=1,
+            command=self.show_controls,
         ).pack(pady=6)
 
         self._update_timer()
@@ -164,11 +164,11 @@ class StartScreen:
                 font=("Consolas", 12), anchor=tk.W
             ).pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-        tk.Button(
-            win, text="KAPAT", fg="white", bg="#444444",
-            activeforeground="white", activebackground="#555555",
-            font=("Consolas", 12, "bold"), bd=0, cursor="hand2",
-            command=win.destroy
+        _make_button(
+            win, text="KAPAT", bg="#444444", fg="white",
+            activebackground="#555555",
+            font=("Consolas", 12, "bold"),
+            command=win.destroy,
         ).pack(pady=20)
 
 
@@ -369,12 +369,25 @@ class LoseScreen:
             font=("Consolas", 16, "bold")
         ).pack(pady=5)
 
-        tk.Button(
-            frame, text="TEKRAR DENE", fg="white", bg="#2a6a2a",
-            activeforeground="white", activebackground="#3a8a3a",
-            font=("Consolas", 18, "bold"), width=14, height=1, bd=0,
-            cursor="hand2", command=app.show_start
+        _make_button(
+            frame, text="TEKRAR DENE", bg="#2a6a2a", fg="white",
+            activebackground="#3a8a3a",
+            font=("Consolas", 18, "bold"), width=14, height=1,
+            command=app.show_start,
         ).pack(pady=30)
+
+
+def _make_button(parent, text, bg, fg, command, **kwargs):
+    """Label tabanlı buton — macOS'ta tk.Button renkleri çalışmaz."""
+    lbl = tk.Label(
+        parent, text=text, fg=fg, bg=bg,
+        cursor="hand2", padx=10, pady=6,
+        **kwargs,
+    )
+    lbl.bind("<Button-1>", lambda e: command())
+    lbl.bind("<Enter>", lambda e: lbl.config(bg=kwargs.get("activebackground", bg)))
+    lbl.bind("<Leave>", lambda e: lbl.config(bg=bg))
+    return lbl
 
 
 class EventUI:
@@ -396,11 +409,11 @@ class EventUI:
             font=("Consolas", 14), justify=tk.LEFT, wraplength=900
         ).pack(expand=True)
 
-        tk.Button(
-            win, text="TAMAM", fg="white", bg="#222222",
-            activeforeground="white", activebackground="#333333",
-            font=("Consolas", 14, "bold"), bd=0, cursor="hand2",
-            command=win.destroy
+        _make_button(
+            win, text="TAMAM", bg="#222222", fg="white",
+            activebackground="#333333",
+            command=win.destroy,
+            font=("Consolas", 14, "bold"),
         ).pack(pady=20)
 
         win.grab_set()
@@ -422,12 +435,12 @@ class EventUI:
         ).pack(padx=30, pady=(30, 15))
 
         for key, label in choices:
-            tk.Button(
+            _make_button(
                 win, text=f"  {key}  {label}",
-                fg="white", bg="#1a1a2e",
-                activeforeground="white", activebackground="#2a2a4e",
-                font=("Consolas", 13, "bold"), bd=1, cursor="hand2",
-                command=lambda k=key: [result.__setitem__(0, k), win.destroy()]
+                bg="#1a1a2e", fg="white",
+                activebackground="#2a2a4e",
+                command=lambda k=key: [result.__setitem__(0, k), win.destroy()],
+                font=("Consolas", 13, "bold"),
             ).pack(fill=tk.X, padx=40, pady=4)
 
         win.grab_set()
